@@ -1,110 +1,34 @@
 
-Now I have all the data. Let me assemble the final Chinese digest. The cron instruction specifies: produce a concise Chinese digest focused on AI agents, coding agents, LLM infrastructure, model/tooling/product shifts, and items relevant to 自研引擎 / Agent 工具链.
+**AI Builders 日报｜2026-06-11**
 
----
+- **Thariq / Claude Code @ Anthropic**：他展示了用 Fable 编辑自己发布视频的流程：模型写了大量代码，并通过工具调用完成转录、`ffmpeg`、调色、Figma MCP、Remotion UI 和渲染，几乎不碰传统视频编辑器。  
+  **为什么重要**：这是“agent 做创意生产流水线”的好例子：不是单点生成，而是把 MCP、CLI、多媒体工具、代码生成串成可复用工作流。对自研 Agent 工具链来说，关键能力是工具编排、文件/媒体上下文、长任务状态与可审计步骤。  
+  https://x.com/trq212/status/2064826394589442448
 
-## AI Builders Digest — 2026年6月11日
+- **Mike Krieger / Anthropic Labs（AI & I 播客）**：他认为 Fable 这类模型会迫使用户重新学习任务拆解方式：从短 prompt/即时问答，转向长时程、多会话、后台子 agent、动态 workflow。他举例把一个 Python 内部项目通过 workflow 迁移到 TypeScript/Bun：先理解代码、生成规格说明、逐模块翻译、增量测试、对抗检查，最后产出可运行迁移版本。  
+  **为什么重要**：Agent 产品的核心界面可能不再只是 chat，而是“用 chat 生成、用代码表达、用 UI 监控”的 workflow。自研引擎要支持 plan 可视化、子任务恢复、分阶段验证，以及不同子任务路由到不同强度/成本模型。  
+  https://www.youtube.com/watch?v=XWpTgCvgYaE
 
-> ⚠️ 本期内容来自缓存的 feed 数据（2026年5月4日），中央 feed 服务暂时不可用。
+- **Mike Krieger / Anthropic Labs（AI & I 播客）**：他还提到 agent-native architecture：软件里的每个动作都应该能被 agent 访问和调用，进一步让 agent 能从软件内部修改软件本身；例如移动端里通过 managed agent 接收编辑请求、展示 live preview 和 diff。  
+  **为什么重要**：这指向下一代 SaaS/工具软件架构：不是“给现有 UI 加聊天框”，而是把产品能力暴露成稳定 tool surface，让 agent 能读状态、改状态、验证结果。对 Hermes/OpenClaw 类系统，MCP/tool schema、权限边界、preview/diff、回滚会成为基础设施。  
+  https://www.youtube.com/watch?v=XWpTgCvgYaE
 
----
+- **Thibault Sottiaux / Codex & ChatGPT @ OpenAI**：他说过去 48 小时 Codex 的 token 消耗出现强劲增长，而且不是由明确发布驱动。  
+  **为什么重要**：coding agent 的使用开始从“尝鲜”进入高频生产环境，token 消耗增长本身说明长任务、多轮修复、并发 agent session 正成为常态。工具链需要更重视成本观测、任务预算、模型路由和失败重试策略。  
+  https://x.com/thsottiaux/status/2064911328087810308
 
-### X / TWITTER
+- **Aaron Levie / Box CEO**：Box 用自己的 Complex Work Eval 测 Fable 驱动的 Box AI Agent，称其相对 Opus 4.8 在复杂企业文档任务上更稳定，尤其是多步计算、复杂推理和跨行业一致性；示例包括法律尽调、医疗、金融服务等。  
+  **为什么重要**：企业 agent 的评测正在从通用 benchmark 转向真实业务文档与流程任务。对自研引擎来说，eval 不应只测答题正确率，而要测“多步任务完成率、跨运行一致性、领域规则遵守、可解释证据链”。  
+  https://x.com/levie/status/2064922814688481678
 
-**Aaron Levie（Box CEO）** 发表了关于企业级 AI agent 落地的深度长文。他指出去年大家都以为 agent 只是对话式 AI 的小进步，实际上从 chat 范式到 agent 参与有意义工作流，企业在实现方面面临巨大复杂性——遗留系统对接、安全权限、评估体系、人机协作模式都需要重新设计。他认为无论是咨询公司、agent 厂商提供的前端部署工程师（FDE），还是企业内部的新建 agent 工程岗位，实施 agent 所创造的工作量将远远超出我们今天的想象。这是他眼中巨大的机会所在。
-https://x.com/levie/status/2051057677984469277
+- **Zara Zhang / Builder**：她提出团队应该为彼此构建 agents/skills，例如设计团队为市场团队构建设计 agent，让市场能在品牌规范内自助产出素材；组织也会从按 function 划分，逐渐转向按 loop 划分。  
+  **为什么重要**：高价值 agent/skill 往往不是通用助手，而是由领域专家把隐性知识、规范、判断标准封装成跨团队能力。对 Hermes 技能系统来说，这强化了“技能即组织知识接口”的方向：专家沉淀上下文，其他团队通过 agent 消费。  
+  https://x.com/zarazhangrui/status/2064835289559023958
 
-他还提出应当把 AI 当作 utility（工具）而非 being（生命体）来看待，否则拟人化类比永远不会成立。
-https://x.com/levie/status/2051009208393589096
+- **Garry Tan / YC CEO**：他提到 Nessie 可以把 ChatGPT、Perplexity、Gemini 的上下文、记忆和历史迁移到其他记忆系统，并特别提到 OpenClaw/Hermes Agent 与 MCP servers。  
+  **为什么重要**：agent 的长期竞争点会落到“可迁移记忆”和“跨工具上下文连续性”。如果用户的历史、偏好、项目状态不能带走，agent 会变成孤岛；MCP + memory bridge 可能成为个人 AI 工作台的底层粘合层。  
+  https://x.com/garrytan/status/2064947145652994510
 
----
-
-**Sam Altman（OpenAI CEO）** 评价「Agents SDK 2.0 被低估了」，一句话暗示 OpenAI 对新一代 agent 框架的重视程度远超外界认知。
-https://x.com/sama/status/2050998576671859003
-
-他还连发两条推文致敬 Greg Brockman，称没有 Greg 的 OpenAI 不可能成功，过去十年与他共事令人无比幸运。
-https://x.com/sama/status/2050964040026050727
-https://x.com/sama/status/2050964008480723059
-
----
-
-**Amjad Masad（Replit CEO）** 展示了 Replit 平台上惊人的并行 agent 活动量：10 个活跃、198 个草稿、700+ 已完成项目，称「互联网上没有任何其他地方的 agent 并行度超过了 Replit」。他还盛赞一天马拉松式 vibe coding 的巨大产出力。
-https://x.com/amasad/status/2051167532523074015
-https://x.com/amasad/status/2051007848440877242
-
----
-
-**Garry Tan（Y Combinator 总裁兼 CEO，GBrain 创建者）** 阐述了个人 AI 的核心愿景——个体人类通过 AI 增强可以做有意义的工作，而不会被大型提取性机构捕获。「拥有自己的提示词和数据，才能真正独立思考。这是新的战场。2034 不必是 1984。」GBrain 现已支持多仓库、多 MCP 端点及完整的 OAuth 认证，用户可通过 OpenClaw 或 Hermes 获取管理面板。
-https://x.com/garrytan/status/2051099735176659256
-https://x.com/garrytan/status/2051110206466302136
-https://x.com/garrytan/status/2051089704658010321
-
----
-
-**Peter Yang（Roblox 产品经理，AI 教程创作者）** 下载了 **Hermes** 并向社区征求与 **OpenClaw** 的对比意见，引发 496 赞和 210 条讨论，说明两款 agent 工具链产品正在快速获得关注。他还分享了实用技巧：用 Amphetamine 让 MacBook 合盖后仍保持 AI agent 持续运行。
-https://x.com/petergyang/status/2051129249348894754
-https://x.com/petergyang/status/2050963126234034387
-
----
-
-**Peter Steinberger（OpenClaw 开发者，@steipete）** 发布了 **🚦RepoBar 0.4.0**——一个 macOS 菜单栏小工具，让 GitHub 管理更智能：SQLite 持久化缓存减少 API 调用、可见的 rate limit 显示、更好的 Issues/PR 加载支持。获得惊人的 1486 赞和 83 次转发。同时 OpenClaw 新 claw beta 版也已上线。
-https://x.com/steipete/status/2051088325100831046
-https://x.com/steipete/status/2051033065367970195
-
----
-
-**Zara Zhang（Builder，follow-builders 创建者）** 指出 AI 彻底改变了软件开发的成本结构——过去开发一个小功能需要说服团队和委员会，现在只需要你和一个 coding agent 就能实现任何「疯狂而奇怪」的想法，那些在大厂产品评审会上被拒绝的东西正是你应该去做的。同时推荐了一个关于人机交互的最新 demo。
-https://x.com/zarazhangrui/status/2051155065331941873
-https://x.com/zarazhangrui/status/2051192270632993176
-
----
-
-**Nikunj Kothari（FPV Ventures 合伙人）** 鼓励创业者永不放弃梦想，认为坚持本身就有巨大的 alpha 收益。
-https://x.com/nikunj/status/2051096096110502063
-
----
-
-**Swyx（Cognition / Temporalio 关联）** 有一条关于短篇写作的个人动态，非 AI 技术相关。
-https://x.com/swyx/status/2051025640657449249
-
----
-
-**Dan Shipper（Every CEO）** 本周 Mythos 栏目暂停，预告有新的有趣内容即将发布。
-https://x.com/danshipper/status/2050997402514161781
-
----
-
-### PODCASTS
-
-**Training Data — Andrej Karpathy: From Vibe Coding to Agentic Engineering**
-
-**The Takeaway：** 世界上最顶尖的 AI 工程师之一亲口承认——他从未像现在这样感觉自己是个落后于时代的程序员，而这恰恰是他最兴奋的时刻。
-
-Andrej Karpathy（OpenAI 联合创始人、前特斯拉 Autopilot 负责人）抛出了一个反直觉的坦白：这位定义了现代 AI 发展路径的人，如今感觉自己「never felt more behind as a programmer」。原因并非技术退步，而是 AI 编程工具在 2025 年底迎来了临界点——他发现自己已经不记得上一次需要亲手修正 AI 生成的代码是什么时候了。
-
-正是这一体验推动他从去年爆火的「vibe coding」概念，转向了更深层的 **「agentic engineering」**。他提出了一个三层软件范式：
-
-- **Software 1.0**：手写代码
-- **Software 2.0**：通过数据集和神经网络编程
-- **Software 3.0**：把 LLM 本身当作一台可编程计算机，编程手段变成了 prompt，context window 变成了操控这台解释器的杠杆
-
-他举了一个生动的例子：安装 OpenClaw 时，传统方式需要写一个复杂的 shell 脚本适配各种平台；但在 Software 3.0 范式中，只需要复制一段 text 给 AI agent，它就能自动完成安装。这不是渐进式改进，而是计算范式的根本转变。Karpathy 的结论是：「真正相信 LLM 就是新计算机的团队，会用完全不同的方式构建产品——不是写代码，而是设计 agent 行为和 prompt 系统。」
-
-他的个人项目文件夹已经「extremely full」。这种从编程焦虑到 agentic 工程实践的转变，或许正是整个行业正在经历的缩影。
-
-https://www.youtube.com/playlist?list=PLOhHNjZItNnMm5tdW61JpnyxeYH5NDDx8
-
----
-
-### 本期要点梳理
-
-| 主题 | 关键信号 |
-|------|----------|
-| **Agent 工具链** | Karpathy 提出 Software 3.0 范式 / OpenAI Agents SDK 2.0 被 Sam 点名「被低估」/ Peter Yang 对比 Hermes vs OpenClaw / Replit 展示极高 agent 并行度 |
-| **企业 agent 落地** | Aaron Levie 深度剖析实施复杂度，认为创造的工作量将远超想象 |
-| **个人 AI / 自研引擎** | Garry Tan 强调自有 prompt 和数据=独立思考 / GBrain 支持多仓库+多 MCP / RepoBar 0.4.0 发布 |
-| **coding agent 生产力** | Amjad 展示 700+ 已完成项目 / Zara 提出「一人一 agent」新开发成本模型 |
-
----
-
-*Generated through the Follow Builders skill: https://github.com/zarazhangrui/follow-builders*
+- **Claude / Anthropic**：Claude Platform 新增 scheduled deployments 和 vault 环境变量。  
+  **为什么重要**：平台正在补齐生产化 agent/app 运行能力：定时部署、密钥管理、环境隔离。这些看似普通 DevOps 功能，但对 agent 工作流上线非常关键，因为 agent 生成/修改的应用也需要安全、可重复、可调度的发布路径。  
+  https://x.com/claudeai/status/2064741184547795408

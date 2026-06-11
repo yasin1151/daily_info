@@ -1,4 +1,2 @@
 
-All failing with HTTP 000 (connection error) — the machine doesn't have internet access in this cron session. No data can be fetched.
-
-[SILENT]
+列表页已拿到，我现在解析帖子链接、分数、时间和标题，筛选今日高信号候选。

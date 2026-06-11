@@ -1,12 +1,35 @@
 
-No proxy config in the YAML. The cron environment inherits the system's network configuration, which routes through Surge/Clash TUN proxy. The proxy is working (we can see 7890/1080 ports open on the gateway) but the SSL MITM handshake is failing.
+**V2EX 技术精选**
 
-I've exhausted my options to reach V2EX. Let me also check if there's any cached/cached content from the blogwatcher that maybe hasn't been fully processed:
+**前端究竟死了没有？** `[职场话题]`  
+围绕“前端岗位是否被 AI 和全栈化挤压”的讨论。核心看点不是前端消失，而是 B 端、外包、后台类需求被 AI 和后端兼做压缩；真正有产品复杂度、交互深度的前端仍有价值。  
+💬 热评：  
+- #11楼 @ZhaokunZhang (👍0): C 端前端仍在，但产品、后端、前端、测试都会被 AI 推向全流程开发；B 端和外包前端压力更大。  
+- #3楼 @Razio (👍0): 只要还有界面交互就离不开前端，关键是持续成长，而不是执着端、语言标签。  
+- #15楼 @redbule (👍0): 反对“vibe 出玩具就宣判职业死亡”，真正做产品仍需要领域理解。  
+🔗 https://www.v2ex.com/t/1219625
 
-Actually, I just realized something — the profile's blogwatcher DB shows V2EX was last scanned at `2026-06-09T23:06:15Z`. That was June 9 at 23:06 UTC (which is June 10 at 07:06 CST). The cron job at `5 7 * * *` = 07:05 CST. So the scan at `23:06:15 UTC` = `07:06:15 CST` — that's the 07:05 cron run on June 10. The V2EX RSS was scanned successfully! So the agent running the cron job was ABLE to reach V2EX.
+**AI 盛行，感觉自己强得可怕** `[问与答]`  
+帖子讨论 AI 编程带来的能力膨胀与学习动力下降：资料检索、代码实现、方案生成都被模型加速后，人反而产生空虚感。值得关注的是开发者如何重新定义学习、创造和长期竞争力。  
+💬 热评：  
+- #9楼 @cxh116 (👍0): 建议为了好玩写小工具；AI 仍需要人给方向、拆问题、多轮迭代。  
+- #11楼 @BelovedOne (👍0): 用免费 AISTUDIO 解决大量产品经理工作，并沉淀符合公司 VI 的 Prompt。  
+- #3楼 @beimenjun (👍0): 现在 Token 价格可能是补贴期，长期“无限 AI 生产力”未必可持续。  
+🔗 https://www.v2ex.com/t/1219653
 
-This means **the cron environment works differently than my current ad-hoc session**. The cron job's embedded agent (the one running the prompt) can reach V2EX, but HERMES itself (this current session) cannot. The cron job probably uses a subprocess with the correct proxy env vars that Hermes doesn't expose to me.
+**Fable 5 好用是真好用，贵也是真贵** `[Claude]`  
+用户反馈新模型在速度、效率、准确性上很强，但一两个小时就能花掉几十美元。讨论焦点是高端模型是否适合日常编码，以及订阅转 API 后的真实成本压力。  
+💬 热评：  
+- #1楼 @horacegao (👍0): 认为后续只能 API 时，很多普通代码任务很难支撑这个成本。  
+- #2楼 @Arispex (👍0): 套餐额度尚可接受，若完全按 API 计费会明显烧钱。  
+- #3楼 @visper (👍0): 用“小学生家教 vs 北大教授”比喻，指出很多任务不需要最高规格模型。  
+🔗 https://www.v2ex.com/t/1219650
 
-Given this is a persistent infrastructure issue where THIS specific session can't access V2EX, I should produce [SILENT] to avoid holding up the delivery pipeline. If there are new V2EX articles, the 07:05 cron job will handle them on its next run.
+**无外网服务器如何使用 Claude Code？** `[问与答]`  
+问题来自远程开发场景：本地能用 Claude Code，但 VS Code Remote SSH 到无外网服务器后无法调用。值得关注的是 AI 编程工具在内网、隔离环境、企业服务器中的代理与远程协作方案。  
+💬 热评：  
+- #2楼 @peasant (👍0): 建议通过 SSH 建反向 SOCKS 代理，让服务器借本地网络访问外网。  
+- #1楼 @hefish (👍0): 建议用 NFS/SMB 挂载代码目录，在有网机器上运行 Claude Code。  
+🔗 https://www.v2ex.com/t/1219648
 
-[SILENT]
+已处理并标记本轮候选 V2EX 文章为已读。
