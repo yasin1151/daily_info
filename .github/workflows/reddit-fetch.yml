@@ -1,5 +1,5 @@
 name: reddit-fetch
-on:
+"on":
   workflow_dispatch:
 permissions:
   contents: write
@@ -17,8 +17,7 @@ jobs:
           curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "https://www.reddit.com/r/unrealengine/hot/.rss" -o reddit_cache/ue_hot.rss
           curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "https://old.reddit.com/r/unrealengine/hot/.rss" -o reddit_cache/ue_old_hot.rss
           python3 - <<'EOF'
-import re, glob, os
-# extract post ids from any html list we got
+import re, glob
 ids = []
 for f in glob.glob('reddit_cache/*.html'):
     try:
