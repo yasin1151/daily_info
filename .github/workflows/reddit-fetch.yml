@@ -3,7 +3,7 @@ name: reddit-fetch
   workflow_dispatch:
     inputs:
       ids:
-        description: "extra post ids for detail fetch, comma separated"
+        description: "post ids for detail fetch, comma separated (overrides auto-extract)"
         required: false
         default: ""
 permissions:
@@ -19,31 +19,44 @@ jobs:
           mkdir -p reddit_cache
           UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
           curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "https://www.reddit.com/r/unrealengine/hot/.rss" -o reddit_cache/ue_hot.rss
-          curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "https://old.reddit.com/r/unrealengine/hot/" -o reddit_cache/ue_old_hot.html
           python3 - <<'PYEOF'
           import re
           try:
               t = open('reddit_cache/ue_hot.rss', encoding='utf-8', errors='replace').read()
           except Exception:
               t = ''
-          ids = re.findall(r'/comments/([a-z0-9]{5,8})/', t)
+          auto = re.findall(r'/comments/([a-z0-9]{5,8})/', t)
           seen = []
-          for i in ids:
+          for i in auto:
               if i not in seen:
                   seen.append(i)
           extra = "${{ inputs.ids }}"
-          for e in extra.split(','):
-              e = e.strip()
-              if e and e not in seen:
-                  seen.append(e)
-          open('reddit_cache/post_ids.txt', 'w').write('\n'.join(seen[:12]))
-          print('IDs:', seen[:12])
+          if extra.strip():
+              ids = [e.strip() for e in extra.split(',') if e.strip()]
+          else:
+              ids = seen[:10]
+          open('reddit_cache/post_ids.txt', 'w').write('\n'.join(ids))
+          print('IDs:', ids)
           PYEOF
           if [ -s reddit_cache/post_ids.txt ]; then
             while read -r pid; do
               [ -n "$pid" ] || continue
-              curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "https://www.reddit.com/r/unrealengine/comments/$pid/.rss" -o "reddit_cache/detail_$pid.rss"
-              curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "https://old.reddit.com/r/unrealengine/comments/$pid/" -o "reddit_cache/detail_$pid.html"
+              ok=0
+              for host in "https://www.reddit.com" "https://old.reddit.com"; do
+                for try in 1 2 3; do
+                  curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "$host/r/unrealengine/comments/$pid/.rss" -o "reddit_cache/detail_$pid.rss"
+                  size=$(wc -c < "reddit_cache/detail_$pid.rss" 2>/dev/null || echo 0)
+                  if [ "$size" -gt 2000 ]; then ok=1; break 2; fi
+                  sleep 6
+                done
+              done
+              if [ "$ok" = 0 ]; then
+                for inst in "https://safereddit.com" "https://redlib.catsarch.com" "https://red.artemislena.eu" "https://redlib.privadency.com"; do
+                  curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "$inst/r/unrealengine/comments/$pid/" -o "reddit_cache/redlib_$pid.html"
+                  size=$(wc -c < "reddit_cache/redlib_$pid.html" 2>/dev/null || echo 0)
+                  if [ "$size" -gt 5000 ]; then break; fi
+                done
+              fi
             done < reddit_cache/post_ids.txt
           fi
           ls -la reddit_cache/
