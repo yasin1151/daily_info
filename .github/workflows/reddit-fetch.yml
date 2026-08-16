@@ -16,29 +16,28 @@ jobs:
           curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "https://old.reddit.com/r/unrealengine/hot/" -o reddit_cache/ue_old_hot.html
           curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "https://www.reddit.com/r/unrealengine/hot/.rss" -o reddit_cache/ue_hot.rss
           curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "https://old.reddit.com/r/unrealengine/hot/.rss" -o reddit_cache/ue_old_hot.rss
-          python3 - <<'EOF'
-import re, glob
-ids = []
-for f in glob.glob('reddit_cache/*.html'):
-    try:
-        t = open(f, encoding='utf-8', errors='replace').read()
-    except Exception:
-        continue
-    ids += re.findall(r'data-fullname="t3_([a-z0-9]+)"', t)
-    ids += re.findall(r'/comments/([a-z0-9]{5,8})/', t)
-seen = []
-for i in ids:
-    if i not in seen:
-        seen.append(i)
-open('reddit_cache/post_ids.txt', 'w').write('\n'.join(seen[:10]))
-print('IDs:', seen[:10])
-EOF
+          python3 - <<'PYEOF'
+          import re, glob
+          ids = []
+          for f in glob.glob('reddit_cache/*.html'):
+              try:
+                  t = open(f, encoding='utf-8', errors='replace').read()
+              except Exception:
+                  continue
+              ids += re.findall(r'data-fullname="t3_([a-z0-9]+)"', t)
+              ids += re.findall(r'/comments/([a-z0-9]{5,8})/', t)
+          seen = []
+          for i in ids:
+              if i not in seen:
+                  seen.append(i)
+          open('reddit_cache/post_ids.txt', 'w').write('\n'.join(seen[:10]))
+          print('IDs:', seen[:10])
+          PYEOF
           if [ -s reddit_cache/post_ids.txt ]; then
-            UA2="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
             while read -r pid; do
               [ -n "$pid" ] || continue
-              curl -sL --connect-timeout 15 --max-time 45 -A "$UA2" "https://old.reddit.com/r/unrealengine/comments/$pid/" -o "reddit_cache/detail_$pid.html"
-              curl -sL --connect-timeout 15 --max-time 45 -A "$UA2" "https://www.reddit.com/r/unrealengine/comments/$pid/.rss" -o "reddit_cache/detail_$pid.rss"
+              curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "https://old.reddit.com/r/unrealengine/comments/$pid/" -o "reddit_cache/detail_$pid.html"
+              curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "https://www.reddit.com/r/unrealengine/comments/$pid/.rss" -o "reddit_cache/detail_$pid.rss"
             done < reddit_cache/post_ids.txt
           fi
           ls -la reddit_cache/
