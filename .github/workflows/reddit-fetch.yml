@@ -19,6 +19,7 @@ jobs:
           mkdir -p reddit_cache
           UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
           curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "https://www.reddit.com/r/unrealengine/hot/.rss" -o reddit_cache/ue_hot.rss
+          curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "https://www.reddit.com/r/unrealengine/hot/" -o reddit_cache/ue_www_hot.html
           python3 - <<'PYEOF'
           import re
           try:
@@ -41,22 +42,21 @@ jobs:
           if [ -s reddit_cache/post_ids.txt ]; then
             while read -r pid; do
               [ -n "$pid" ] || continue
-              ok=0
-              for host in "https://www.reddit.com" "https://old.reddit.com"; do
-                for try in 1 2 3; do
-                  curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "$host/r/unrealengine/comments/$pid/.rss" -o "reddit_cache/detail_$pid.rss"
-                  size=$(wc -c < "reddit_cache/detail_$pid.rss" 2>/dev/null || echo 0)
-                  if [ "$size" -gt 2000 ]; then ok=1; break 2; fi
-                  sleep 6
+              for try in 1 2 3; do
+                for src in "https://www.reddit.com|rss" "https://old.reddit.com|rss" "https://www.reddit.com|html"; do
+                  host="${src%%|*}"; kind="${src##*|}"
+                  if [ "$kind" = "rss" ]; then
+                    curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "$host/r/unrealengine/comments/$pid/.rss" -o "reddit_cache/detail_$pid.rss"
+                    size=$(wc -c < "reddit_cache/detail_$pid.rss" 2>/dev/null || echo 0)
+                    if [ "$size" -gt 2000 ]; then break 2; fi
+                  else
+                    curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "$host/r/unrealengine/comments/$pid/" -o "reddit_cache/www_$pid.html"
+                    size=$(wc -c < "reddit_cache/www_$pid.html" 2>/dev/null || echo 0)
+                    if [ "$size" -gt 10000 ]; then break 2; fi
+                  fi
+                  sleep 10
                 done
               done
-              if [ "$ok" = 0 ]; then
-                for inst in "https://safereddit.com" "https://redlib.catsarch.com" "https://red.artemislena.eu" "https://redlib.privadency.com"; do
-                  curl -sL --connect-timeout 15 --max-time 45 -A "$UA" "$inst/r/unrealengine/comments/$pid/" -o "reddit_cache/redlib_$pid.html"
-                  size=$(wc -c < "reddit_cache/redlib_$pid.html" 2>/dev/null || echo 0)
-                  if [ "$size" -gt 5000 ]; then break; fi
-                done
-              fi
             done < reddit_cache/post_ids.txt
           fi
           ls -la reddit_cache/
